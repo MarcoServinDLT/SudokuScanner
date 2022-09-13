@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Sudoku Scan</string>
+    <string name="button_scan_text">Scan</string>
+</resources>
