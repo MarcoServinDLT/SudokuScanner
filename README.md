@@ -87,6 +87,8 @@ y2=
 **Optimal Box blur complexity**
 $$O(n^{2})$$
 
+![Box Blur process](./readmeResources/boxblur.gif)
+
 #### Step 3.- Binarize image
 ...
 ### Image Recognition 
