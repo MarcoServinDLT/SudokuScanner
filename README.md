@@ -87,7 +87,7 @@ y2=
 **Optimal Box blur complexity**
 $$O(n^{2})$$
 
-<img src="./readmeResources/boxblur.gif" alt="drawing" width="150"/>
+<img src="./readmeResources/boxblur.gif" alt="drawing" width="250"/>
 
 #### Step 3.- Binarize image
 ...
