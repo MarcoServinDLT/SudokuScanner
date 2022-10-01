@@ -15,9 +15,77 @@ The process to correctly obtain the binarized image can be summarized in three s
 3. Compare the grayscale image with the blurred image to obtain the binarized image.
 
 #### Step 1.- Get grayscale image
-...
+First of all is necessary to convert the image to grayscale, so in this fragment will be explain the approach taken to solve this problem.
+
+To convert a colored image to grayscale is necessary obtain the luminance of every pixel of the image, for that we use the next ecuation:
+
+$$C_{grayscale}= 0.2126 R + 0.7152 G + 0.0722 B$$
+
+The previous formula wants to weight each color channel to get the luminance, and thus get the grayscale value for the pixel. Given the formula can be seen that the green channel has more weigth for the luminance, so a shortcut for geting the grayscale pixel would be take only the value of the green channel.
+
+Having explained the above, it can be seen that the approach that will be taken to solve this first part is only take the green channel of the image, since it is a more efficient way to obtain the image in grayscale and improve the performance of the image processing, this is because the steps Following this are much more complex algorithms that can impact the performance of the application.
+
+Just as a note, there are many different ways to get a grayscale image, and one of them was the first approach taken in this project, the approach is to convert the image through the color saturation of the image, because the Image saturation determines the light intensity for each color of the spectrum, that means that if you do not have color saturation you will get a grayscale image as a result, since all colors will have the same intensity.
+
 #### Step 2.- Blur image
-...
+There are many algorithms
+##### GaussianBlur:
+
+**Gaussian blur mask**
+
+**Gaussian blur operation**
+
+**Optimal Gaussian blur complexity**
+$$O(n^{4})$$
+
+##### Box blur
+Box blur is a linear filter and an approximation of Gaussian blur, this filter is simpler than Gaussian because it transforms the original image by shifting each pixel to the average of the pixel with its neighbors (the number of neighbors is given by the kernel's radius) , the main difference with Gaussian blur is that Gaussian adds more weight or importance to the center pixels.
+
+**Box blur mask**
+$$\displaystyle\begin{bmatrix}
+1_{1,1} & 1_{1,2} & \cdots & 1_{1,n}\\
+1_{2,1} & 1_{2,2} & \cdots & 1_{2,n}\\\\
+\vdots & \vdots & \ddots & \vdots\\
+1_{n,1} & 1_{n,2} & \cdots & 1_{n,n}\\
+\end{bmatrix}
+\frac{1}{n}$$
+
+**Box blur operation**
+$$prefix_{r, c}=\displaystyle\sum_{i=0, j=0}^{r, c}{gray_{i,j}}$$
+
+$$blur_{r,c}= \displaystyle\frac{
+    {prefix_{y2,x2}} + 
+    {prefix_{y1,x1}} -
+    {prefix_{y2,x1}} -
+    {prefix_{y1,x2}} 
+}{Radius}$$
+
+
+$$; 
+x1=
+\begin{cases}
+    c-Radius & \quad c-Radius \geq 0\\
+    0 & \quad\text{oterwhise}
+\end{cases}, 
+x2=
+\begin{cases}
+    c+Radius & \quad c+Radius < w\\
+    0 & \quad\text{oterwhise}
+\end{cases}, 
+y1=
+\begin{cases}
+    r-Radius & \quad r-Radius \geq 0\\
+    0 & \quad\text{oterwhise}
+\end{cases},
+y2=
+\begin{cases}
+    r-Radius & \quad r+Radius < h\\
+    0 & \quad\text{oterwhise}
+\end{cases}$$
+
+**Optimal Box blur complexity**
+$$O(n^{2})$$
+
 #### Step 3.- Binarize image
 ...
 ### Image Recognition 
