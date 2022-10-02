@@ -29,19 +29,20 @@ Just as a note, there are many different ways to get a grayscale image, and one 
 
 #### Step 2.- Blur image
 There are many algorithms
-##### GaussianBlur:
+#### GaussianBlur:
 
-**Gaussian blur mask**
+**Gaussian blur kernel**
 
 **Gaussian blur operation**
 
 **Optimal Gaussian blur complexity**
 $$O(n^{4})$$
 
-##### Box blur
+#### Box blur
 Box blur is a linear filter and an approximation of Gaussian blur, this filter is simpler than Gaussian because it transforms the original image by shifting each pixel to the average of the pixel with its neighbors (the number of neighbors is given by the kernel's radius) , the main difference with Gaussian blur is that Gaussian adds more weight or importance to the center pixels.
 
 **Box blur mask**
+As mentioned above, the box blur filter is only a average of the neigthbor pixels, so the kernel is only a one's matrix of size $$n$$ where $$n = (Radius*2)+1$$, like this:
 
 $$\displaystyle\begin{bmatrix}
 1_{1,1} & 1_{1,2} & \cdots & 1_{1,n}\\
@@ -52,6 +53,8 @@ $$\displaystyle\begin{bmatrix}
 \frac{1}{n}$$
 
 **Box blur operation**
+In the same way that Gaussian blur is applied to an image, box blur is applied, however, the kernel characteristics allow the filter to be optimally applied with the prefix addition technique.
+
 $$prefix_{r, c}=\displaystyle\sum_{i=0, j=0}^{r, c}{gray_{i,j}}$$
 
 $$blur_{r,c}= \displaystyle\frac{
@@ -84,10 +87,12 @@ y2=
     0 & \quad\text{otherwise}
 \end{cases}$$
 
+
+![box blur process](./readmeResources/boxblur.gif#center)
+
 **Optimal Box blur complexity**
 $$O(n^{2})$$
 
-<img src="./readmeResources/boxblur.gif" alt="drawing" width="250"/>
 
 #### Step 3.- Binarize image
 ...
