@@ -12,3 +12,12 @@ fun ByteBuffer.toByteArray(): ByteArray {
     get(data)   // Copy the buffer into a byte array
     return data // Return the byte array
 }
+
+/**
+ * Operator overloading extension to divide an entire array.
+ * @param div The value that you want to divide the vector.
+ */
+operator fun DoubleArray.divAssign(div: Double) {
+    for(col in 0 until this.size)
+        this[col] /= div
+}
