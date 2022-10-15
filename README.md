@@ -42,7 +42,7 @@ $$O(n^{4})$$
 Box blur is a linear filter and an approximation of Gaussian blur, this filter is simpler than Gaussian because it transforms the original image by shifting each pixel to the average of the pixel with its neighbors (the number of neighbors is given by the kernel's radius) , the main difference with Gaussian blur is that Gaussian adds more weight or importance to the center pixels.
 
 **Box blur mask**
-As mentioned above, the box blur filter is only a average of the neigthbor pixels, so the kernel is only a one's matrix of size $$n$$ where $$n = (Radius*2)+1$$, like this:
+As mentioned above, the box blur filter is only a average of the neigthbor pixels, so the kernel is only a one's matrix of size $n$ where $n = (Radius*2)+1$, like this:
 
 $$\displaystyle\begin{bmatrix}
 1_{1,1} & 1_{1,2} & \cdots & 1_{1,n}\\
@@ -87,8 +87,9 @@ y2=
     0 & \quad\text{otherwise}
 \end{cases}$$
 
-
-![box blur process](./readmeResources/boxblur.gif#center)
+<p align="center">
+    <img src="./readmeResources/boxblur.gif" width="400">
+</p>
 
 **Optimal Box blur complexity**
 $$O(n^{2})$$
