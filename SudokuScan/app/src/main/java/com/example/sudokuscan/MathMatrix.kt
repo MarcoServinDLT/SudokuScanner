@@ -69,7 +69,7 @@ class MathMatrix(private val n: Int = 0, private val m: Int = 0) {
             throw ArithmeticException("It is not possible to multiply two matrix with distinct row column relation.")
         var result = MathMatrix(this.m, other.n)
         for(i in 0 until n) {
-            for(j in 0 until m)
+            for(j in 0 until other.m)
                 for(k in 0 until n)
                     result[i, j] += this.matrix[i][k] * other[k, j]
         }
@@ -95,14 +95,15 @@ class MathMatrix(private val n: Int = 0, private val m: Int = 0) {
      * @return The result of the elimination.
      */
     fun gaussElimination(rvalues: MathMatrix): MathMatrix {
+        var copy = this.matrix.clone()
         for(step in 0 until n){
-            rvalues[step] /= this.matrix[step][step]
-            this.matrix[step] /= this.matrix[step][step]
+            rvalues[step] /= copy[step][step]
+            copy[step] /= copy[step][step]
             for(i in 0 until n){
                 if(i != step) {
-                    val factor = this.matrix[i][step]
+                    val factor = copy[i][step]
                     for (j in 0 until m)
-                        this.matrix[i][j] -= this.matrix[step][j] * factor
+                        copy[i][j] -= copy[step][j] * factor
                     for (j in 0 until rvalues.m)
                         rvalues[i, j] -= rvalues[step, j] * factor
                 }
