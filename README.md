@@ -1,3 +1,9 @@
+<style>
+.math{
+    overflow-x: scroll;
+}
+</style>
+
 # Sudoku Scanner
 
 Android Aplication to solve sudoku by scanning them with the camera.
@@ -28,15 +34,7 @@ Having explained the above, it can be seen that the approach that will be taken 
 Just as a note, there are many different ways to get a grayscale image, and one of them was the first approach taken in this project, the approach is to convert the image through the color saturation of the image, because the Image saturation determines the light intensity for each color of the spectrum, that means that if you do not have color saturation you will get a grayscale image as a result, since all colors will have the same intensity.
 
 #### Step 2.- Blur image
-There are many algorithms
-#### GaussianBlur:
-
-**Gaussian blur kernel**
-
-**Gaussian blur operation**
-
-**Optimal Gaussian blur complexity**
-$$O(n^{4})$$
+There are two algorithms to blur an image; the Gaussian blur and the box blur, for this project the latter was chosen because it can be optimized, since, although the Gaussian blur can be more accurate to find lines or patterns because it is a weighted average, the box blur as a simple average can be optimized obtaining much higher performance.
 
 #### Box blur
 Box blur is a linear filter and an approximation of Gaussian blur, this filter is simpler than Gaussian because it transforms the original image by shifting each pixel to the average of the pixel with its neighbors (the number of neighbors is given by the kernel's radius) , the main difference with Gaussian blur is that Gaussian adds more weight or importance to the center pixels.
@@ -57,15 +55,13 @@ In the same way that Gaussian blur is applied to an image, box blur is applied, 
 
 $$prefix_{r, c}=\displaystyle\sum_{i=0, j=0}^{r, c}{gray_{i,j}}$$
 
+<div class="math">
 $$blur_{r,c}= \displaystyle\frac{
     {prefix_{y2,x2}} + 
     {prefix_{y1,x1}} -
     {prefix_{y2,x1}} -
     {prefix_{y1,x2}} 
-}{Radius}$$
-
-
-$$; 
+}{Radius};
 x1=
 \begin{cases}
     c-Radius & \quad c-Radius \geq 0\\
@@ -86,6 +82,7 @@ y2=
     r-Radius & \quad r+Radius < h\\
     0 & \quad\text{otherwise}
 \end{cases}$$
+</div>
 
 <p align="center">
     <img src="./readmeResources/boxblur.gif" width="400">
@@ -94,10 +91,22 @@ y2=
 **Optimal Box blur complexity**
 $$O(n^{2})$$
 
-
 #### Step 3.- Binarize image
-...
+
+To binarize the image it was necessary to have the blurred image and the grayscale image, this to compare them and if the difference is greater than a threshold, the pixel will be activated (the threshold is not an exact value, it can be modified to obtain the best result). So the conversion could be given by the following expression:
+
+$$binImg_{r,c} = 
+\begin{cases}
+1 & \quad (blur_{r,c} - img_{rc}) > \epsilon \\
+0 & \quad \text{otherwise}
+\end{cases}$$
+
 ### Image Recognition 
+
+#### Getting the largest object on the image
+
+#### Fix the object's perspective
+
 #### **🚧 Working on it 🚧**
 ### Tensorflow Model
 ...
@@ -113,8 +122,8 @@ $$O(n^{2})$$
 ---
 
 [x] Preprocess the image capture.
-[ ] Recognize zones of interest.
-[ ] Extract zones of interest.
+[x] Recognize zones of interest.
+[x] Extract zones of interest.
 [x] Create an acurate ML model to recognize numbers.
 [ ] Implement tensorflow lite model.
 
