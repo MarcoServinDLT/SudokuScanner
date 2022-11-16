@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.graphics.*
 import android.os.Bundle
 import android.util.Log
+import android.util.Size
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -112,9 +113,27 @@ class Scan : AppCompatActivity(), ImageAnalysis.Analyzer {
         if (!::bufferImage.isInitialized){
             bufferImage = Bitmap.createBitmap(bitmap.width, bitmap.height, bitmap.config)
         }
+        val height = bitmap.height; val width = bitmap.width
         val processor = ImageProcessor(bitmap)
         val binaryImage = processor.getFeatureMap()
-        runOnUiThread { binding.ivGrayView.setImageBitmap(binaryImage) }
+
+        val puzzleCoords = PuzzleExtractor().getPuzzle(binaryImage, height, width)
+
+        try {
+
+            val puzzle = Bitmap.createBitmap(
+                PerspectiveFixer.getFixedImage(puzzleCoords, binaryImage, width),
+                //binaryImage,
+                900,
+                900,
+                Bitmap.Config.RGB_565
+            )
+
+
+            runOnUiThread { binding.ivGrayView.setImageBitmap(puzzle) }
+        }catch (e: Exception){
+            Log.e("Error:", e.toString())
+        }
     } // End of the process to analyze image.
 
 }
