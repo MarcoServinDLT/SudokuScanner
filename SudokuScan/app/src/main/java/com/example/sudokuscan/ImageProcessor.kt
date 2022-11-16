@@ -183,14 +183,9 @@ class ImageProcessor (private var image: Bitmap, private val noiseSuppression: B
      * Function to get the image with the features extracted.
      * @return A bitmap in black and white format with the features.
      */
-    fun getFeatureMap(): Bitmap {
+    fun getFeatureMap(): IntArray {
         featureExtraction()
-        return Bitmap.createBitmap(
-            filterBuffer,
-            width,
-            height,
-            image.config
-        )
+        return filterBuffer
     }
 
 } // End of the class. //
