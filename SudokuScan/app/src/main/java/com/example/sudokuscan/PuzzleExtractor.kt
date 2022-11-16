@@ -1,16 +1,18 @@
 package com.example.sudokuscan
 
+import android.util.Log
+import java.security.PrivateKey
 import java.util.*
 import kotlin.math.abs
 
-class PuzzleExtractor (
-    private var bytes: Array<IntArray>
+class PuzzleExtractor {
 
-        ){
-
+    private lateinit var bytes: IntArray
+    private lateinit var copy: IntArray
     private var h = 0
     private var w = 0
     private var puzzle = ConnectedElement()
+
 
     /**
      * Class to set the largest connected region in the image.
@@ -18,8 +20,8 @@ class PuzzleExtractor (
     inner class ConnectedElement : Comparable<ConnectedElement>{
         var maxX = 0
         var maxY = 0
-        var minX = bytes[0].size
-        var minY = bytes.size
+        var minX = w
+        var minY = h
 
         /**
          * Function to set new pixel coordinate to connected element and update the
@@ -54,22 +56,22 @@ class PuzzleExtractor (
      * @return A connected element object of all the region connected.
      */
     private fun depthSearch(x: Int, y: Int): ConnectedElement{
-        //var region: ConnectedElement()
-        var nodes = Stack<Coordinate>()
+        val nodes = Stack<Coordinate>()
         val region = ConnectedElement()
         nodes.push(Coordinate(x, y))
         /* backtrack on the pixels to know connected element. */
         while(!nodes.empty()){
             val coord = nodes.pop()
             region.addPixelToRegion(coord)
-            bytes[coord.y][coord.x] = 0
-            val minX = 0.coerceAtLeast(coord.x - 1); val maxX = w.coerceAtMost(coord.x+1)
-            val minY = 0.coerceAtLeast(coord.y - 1); val maxY = h.coerceAtMost(coord.y+1)
-            for(y in minY until maxY){
-                for(x in minX until maxX) {
-                    val active: Boolean = (bytes[y][x] == 255)
-                    if (active)
-                        nodes.push(Coordinate(x, y))
+            val minX = 0.coerceAtLeast(coord.x - 1); val maxX = w.coerceAtMost(coord.x+2)
+            val minY = 0.coerceAtLeast(coord.y - 1); val maxY = h.coerceAtMost(coord.y+2)
+            for(row in minY until maxY){
+                for(col in minX until maxX) {
+                    val active: Boolean = (copy[row * w + col] != 0)
+                    if (active) {
+                        nodes.push(Coordinate(col, row))
+                        copy[row * w + col] = 0
+                    }
                 } // End of the cycle
             }
         } // End of the stack backtrack cycle. //
@@ -88,25 +90,26 @@ class PuzzleExtractor (
      *
      */
     private fun getCorner(coordinate: Coordinate): Coordinate {
-        var x = coordinate.x; var y = coordinate.y
-        var closest = Coordinate(x, y)
-        val horizontal = if(x == puzzle.minX) (puzzle.minX until puzzle.maxX) else (puzzle.maxX downTo puzzle.minX)
-        val vertical = if(y == puzzle.minY) (puzzle.minY until puzzle.maxY) else (puzzle.maxY downTo puzzle.minY)
+        val x = coordinate.x; val y = coordinate.y
+        val midX = (puzzle.minX + puzzle.maxX); val midY = (puzzle.minY + puzzle.maxY)
+        var closest = Coordinate(midX, midY)
+        val horizontal = if(x == puzzle.minX) (puzzle.minX until puzzle.maxX) else (puzzle.maxX-1 downTo puzzle.minX)
+        val vertical = if(y == puzzle.minY) (puzzle.minY until puzzle.maxY) else (puzzle.maxY-1 downTo puzzle.minY)
         /* checking for vertical corner. */
         for(hx in horizontal) {
             val current = Coordinate(hx, y)
-            closest = if (manhattanDistance(current, coordinate) < manhattanDistance(closest, coordinate))
-                current else
-                closest
+            if(bytes[y * w + hx] != 0)
+                closest = if (manhattanDistance(current, coordinate) < manhattanDistance(closest, coordinate))
+                    current else closest
         }
         /* checking for horizontal corner. */
         for(vy in vertical) {
             val current = Coordinate(x, vy)
-            closest = if (manhattanDistance(current, coordinate) < manhattanDistance(closest, coordinate))
-                current else
-                closest
+            if(bytes[vy * w + x] != 0)
+                closest = if (manhattanDistance(current, coordinate) < manhattanDistance(closest, coordinate))
+                    current else closest
         }
-        return Coordinate(x,y)
+        return closest
     } // End of the manhattan distance function. //
 
     /**
@@ -114,12 +117,14 @@ class PuzzleExtractor (
      * supposed to be the puzzle.
      * @return Return the coordinates of the puzzle.
      */
-    fun getPuzzle(): RegionCorners{
-        var puzzle: ConnectedElement = ConnectedElement()
-        for(y in bytes.indices){
-            for(x in 0 until bytes[0].size) {
-                if(bytes[x][y] == 255) {
-                    val region = depthSearch(x, y)
+    fun getPuzzle(image: IntArray, height: Int, width: Int): RegionCorners{
+        bytes = image; copy = image.clone()
+        Log.d("images","${bytes.toString()} ${copy.toString()}")
+        h = height; w = width
+        for(row in 0 until h){
+            for(col in 0 until w) {
+                if(copy[row * w + col] != 0) {
+                    val region = depthSearch(col, row)
                     puzzle = if(region > puzzle) region else puzzle
                 }
             } // End of the row cycle. //
