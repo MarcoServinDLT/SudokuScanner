@@ -1,9 +1,3 @@
-<style>
-.math{
-    overflow-x: scroll;
-}
-</style>
-
 # Sudoku Scanner
 
 Android Aplication to solve sudoku by scanning them with the camera.
@@ -55,13 +49,14 @@ In the same way that Gaussian blur is applied to an image, box blur is applied, 
 
 $$prefix_{r, c}=\displaystyle\sum_{i=0, j=0}^{r, c}{gray_{i,j}}$$
 
-<div class="math">
 $$blur_{r,c}= \displaystyle\frac{
     {prefix_{y2,x2}} + 
     {prefix_{y1,x1}} -
     {prefix_{y2,x1}} -
     {prefix_{y1,x2}} 
-}{Radius};
+}{Radius}$$
+
+$$;
 x1=
 \begin{cases}
     c-Radius & \quad c-Radius \geq 0\\
@@ -82,7 +77,6 @@ y2=
     r-Radius & \quad r+Radius < h\\
     0 & \quad\text{otherwise}
 \end{cases}$$
-</div>
 
 <p align="center">
     <img src="./readmeResources/boxblur.gif" width="400">
@@ -121,29 +115,29 @@ $$binImg_{r,c} =
 ## Objetives 🎯
 ---
 
-[x] Preprocess the image capture.
-[x] Recognize zones of interest.
-[x] Extract zones of interest.
-[x] Create an acurate ML model to recognize numbers.
-[ ] Implement tensorflow lite model.
+- [x] Preprocess the image capture.
+- [x] Recognize zones of interest.
+- [x] Extract zones of interest.
+- [x] Create an acurate ML model to recognize numbers.
+- [ ] Implement tensorflow lite model.
 
 ## Features
 ---
 
 ## Road map 🛣
 ---
-[ ] Android app 
-- [x] Create a module to preprocess the image.
-- [x] Module to image recognition.
-- [ ] Extract the numbers from the boxes trought recognition module.
-- [ ] Implement the tensorflow model as a tensorflow lite model.
-- [ ] Show the solution on capture.
+- [ ] Android app 
+    - [x] Create a module to preprocess the image.
+    - [x] Module to image recognition.
+    - [ ] Extract the numbers from the boxes trought recognition module.
+    - [ ] Implement the tensorflow model as a tensorflow lite model.
+    - [ ] Show the solution on capture.
 
-[ ] Tensorflow model
-- [x] Get the fonts to create the dataset.
-- [x] Generate the dataset.
-- [x] Create Convolutional model to recognize numbers.
-- [ ] Export the model as a tensorflow lite model.
+- [ ] Tensorflow model
+    - [x] Get the fonts to create the dataset.
+    - [x] Generate the dataset.
+    - [x] Create Convolutional model to recognize numbers.
+    - [ ] Export the model as a tensorflow lite model.
 
 
 ## Build development enviroment ⚙
