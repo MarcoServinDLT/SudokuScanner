@@ -1,13 +1,11 @@
 package com.example.sudokuscan
 
-import androidx.versionedparcelable.ParcelImpl
-
 
 class MathMatrix(private val n: Int = 0, private val m: Int = 0) {
 
     private lateinit var matrix: Array<DoubleArray>
-    constructor(predMat: Array<DoubleArray>) : this(predMat.size, predMat[0].size){
-        this.matrix = predMat
+    constructor(matrix: Array<DoubleArray>) : this(matrix.size, matrix[0].size){
+        this.matrix = matrix
     }
 
 
@@ -67,7 +65,7 @@ class MathMatrix(private val n: Int = 0, private val m: Int = 0) {
     operator fun times(other: MathMatrix): MathMatrix{
         if(this.m != other.n)
             throw ArithmeticException("It is not possible to multiply two matrix with distinct row column relation.")
-        var result = MathMatrix(this.m, other.n)
+        val result = MathMatrix(this.m, other.n)
         for(i in 0 until n) {
             for(j in 0 until other.m)
                 for(k in 0 until n)
@@ -82,7 +80,7 @@ class MathMatrix(private val n: Int = 0, private val m: Int = 0) {
      * @return A MathMatrix with the transpose configuration.
      */
     fun transpose(): MathMatrix {
-        var transpose = MathMatrix(this.n, this.m)
+        val transpose = MathMatrix(this.n, this.m)
         for(c in 0 until  m)
             for(r in n-1 downTo 0)
                 transpose[r, c] = this.matrix[c][r]
@@ -95,7 +93,7 @@ class MathMatrix(private val n: Int = 0, private val m: Int = 0) {
      * @return The result of the elimination.
      */
     fun gaussElimination(rvalues: MathMatrix): MathMatrix {
-        var copy = this.matrix.clone()
+        val copy = this.matrix.clone()
         for(step in 0 until n){
             rvalues[step] /= copy[step][step]
             copy[step] /= copy[step][step]
@@ -113,9 +111,9 @@ class MathMatrix(private val n: Int = 0, private val m: Int = 0) {
     } // End of the function to get the matrix elimination. //
 
     fun getLUMatrix(): Pair<MathMatrix, MathMatrix> {
-        var l = MathMatrix(n,m)
+        val l = MathMatrix(n,m)
         l.identity()
-        var u = this
+        val u = this
         for(step in 0 until n) {
             val denominator = u[step, step]
             for(i in step+1 until n) {
@@ -150,10 +148,10 @@ class MathMatrix(private val n: Int = 0, private val m: Int = 0) {
         return gaussElimination(inv)
     } // End of the function to factorising the matrix. //
 
-    fun printmatrix(){
+    fun printMatrix(){
         for(r in matrix){
             for(i in r)
-                print(" ${i} ")
+                print(" $i ")
             println()
         }
     }
