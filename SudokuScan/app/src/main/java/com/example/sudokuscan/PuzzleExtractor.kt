@@ -1,7 +1,6 @@
 package com.example.sudokuscan
 
 import android.util.Log
-import java.security.PrivateKey
 import java.util.*
 import kotlin.math.abs
 
@@ -50,7 +49,7 @@ class PuzzleExtractor {
     } // End of the  connected element class. //
 
     /**
-     * Function to search a connected element.
+     * Function to search the largest connected element.
      * @param x The column of the image.
      * @param y The row of the image.
      * @return A connected element object of all the region connected.
@@ -82,19 +81,22 @@ class PuzzleExtractor {
      * Function to get the manhattan distance of two points at the image.
      * @param
      */
-    private fun manhattanDistance(pointA: Coordinate, pointB: Coordinate) =
+    private fun manhattanDistance(pointA: Coordinate, pointB: Coordinate): Int =
         abs(pointA.x - pointB.x) + abs(pointA.y - pointB.y)
 
     /**
      * Function to get the exact corner coordinate of the puzzle.
-     *
+     * @param coordinate The coordinate value.
+     * @return A Coordinate object with the value for x and y axis.
      */
     private fun getCorner(coordinate: Coordinate): Coordinate {
         val x = coordinate.x; val y = coordinate.y
         val midX = (puzzle.minX + puzzle.maxX); val midY = (puzzle.minY + puzzle.maxY)
         var closest = Coordinate(midX, midY)
-        val horizontal = if(x == puzzle.minX) (puzzle.minX until puzzle.maxX) else (puzzle.maxX-1 downTo puzzle.minX)
-        val vertical = if(y == puzzle.minY) (puzzle.minY until puzzle.maxY) else (puzzle.maxY-1 downTo puzzle.minY)
+        val horizontal = if(x == puzzle.minX) (puzzle.minX until puzzle.maxX)
+            else (puzzle.maxX-1 downTo puzzle.minX)
+        val vertical = if(y == puzzle.minY) (puzzle.minY until puzzle.maxY)
+            else (puzzle.maxY-1 downTo puzzle.minY)
         /* checking for vertical corner. */
         for(hx in horizontal) {
             val current = Coordinate(hx, y)
@@ -110,16 +112,16 @@ class PuzzleExtractor {
                     current else closest
         }
         return closest
-    } // End of the manhattan distance function. //
+    } // End of the get corner function. //
 
     /**
      * Function to get the largest connected region of the image, which
      * supposed to be the puzzle.
      * @return Return the coordinates of the puzzle.
      */
-    fun getPuzzle(image: IntArray, height: Int, width: Int): RegionCorners{
+    fun getPuzzle(image: IntArray, height: Int, width: Int): RegionCorners {
         bytes = image; copy = image.clone()
-        Log.d("images","${bytes.toString()} ${copy.toString()}")
+        Log.d("images","$bytes $copy")
         h = height; w = width
         for(row in 0 until h){
             for(col in 0 until w) {
