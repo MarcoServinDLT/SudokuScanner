@@ -1,28 +1,22 @@
 package com.example.sudokuscan
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.*
 import android.os.Bundle
 import android.util.Log
-import android.util.Size
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.get
-import androidx.core.graphics.set
 import androidx.lifecycle.LifecycleOwner
 import com.example.sudokuscan.databinding.ActivityScanBinding
-import java.io.ByteArrayOutputStream
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-import kotlin.random.Random
 
 
 class Scan : AppCompatActivity(), ImageAnalysis.Analyzer {
@@ -30,29 +24,30 @@ class Scan : AppCompatActivity(), ImageAnalysis.Analyzer {
     private lateinit var binding: ActivityScanBinding
 
     private val executor = Executors.newSingleThreadExecutor()
-    private val permissions = listOf(Manifest.permission.CAMERA)
     private lateinit var bufferImage: Bitmap
     //private val processor = ImageProcessor(bufferImage)
 
     /**
-     * Function on createe
+     * Function on create
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityScanBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        var cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-        cameraProviderFuture.addListener({
-            try {
-                val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-                startCamera(cameraProvider)
-            } catch (e: ExecutionException) {
-                e.printStackTrace()
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
-            }
-        }, getExecutor())
+        requestPermission {
+            val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+            cameraProviderFuture.addListener({
+                try {
+                    val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+                    startCamera(cameraProvider)
+                } catch (e: ExecutionException) {
+                    e.printStackTrace()
+                } catch (e: InterruptedException) {
+                    e.printStackTrace()
+                }
+            }, getExecutor())
+        }
 
     } // End of on create function. //
 
@@ -64,6 +59,26 @@ class Scan : AppCompatActivity(), ImageAnalysis.Analyzer {
         }
 
         super.onDestroy()
+    }
+
+    private fun requestPermission(onPermission: () -> Unit) {
+        requestCameraPermission {
+            if(it) {
+                onPermission()
+            }
+            else {
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun requestCameraPermission(onResult: ((Boolean) -> Unit)) {
+        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
+            onResult(true)
+        else
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+                onResult(it)
+            }.launch(android.Manifest.permission.CAMERA)
     }
 
     /**
@@ -85,7 +100,7 @@ class Scan : AppCompatActivity(), ImageAnalysis.Analyzer {
         preview.setSurfaceProvider(binding.imageView.surfaceProvider)
 
         /* --------------- IMAGE CAPTURE USE CASE DECLARATION --------------- */
-        var imageCapture = ImageCapture.Builder()
+        val imageCapture = ImageCapture.Builder()
             .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
             .build()
 
@@ -97,7 +112,13 @@ class Scan : AppCompatActivity(), ImageAnalysis.Analyzer {
         imageAnalysis.setAnalyzer(getExecutor(), this)
 
         //bind to lifecycle:
-        cameraProvider.bindToLifecycle((this as LifecycleOwner)!!, cameraSelector, preview, imageCapture, imageAnalysis )
+        cameraProvider.bindToLifecycle(
+            (this as LifecycleOwner),
+            cameraSelector,
+            preview,
+            imageCapture,
+            imageAnalysis
+        )
     } // End of the function to initialize the camera. //
 
     /**
@@ -105,7 +126,9 @@ class Scan : AppCompatActivity(), ImageAnalysis.Analyzer {
      */
     override fun analyze(image: ImageProxy) {
         val bitmap: Bitmap? =
-            binding.imageView.bitmap?.let { Bitmap.createScaledBitmap(it, 250, 450, false) }
+            binding.imageView.bitmap?.let {
+                Bitmap.createScaledBitmap(it, 250, 450, false)
+            }
         image.close()
         /* check for get a bitmap .*/
         if (bitmap == null) return
@@ -117,19 +140,16 @@ class Scan : AppCompatActivity(), ImageAnalysis.Analyzer {
         val processor = ImageProcessor(bitmap)
         val binaryImage = processor.getFeatureMap()
 
-        val puzzleCoords = PuzzleExtractor().getPuzzle(binaryImage, height, width)
+        val puzzleCoordinates = PuzzleExtractor().getPuzzle(binaryImage, height, width)
 
         try {
 
             val puzzle = Bitmap.createBitmap(
-                PerspectiveFixer.getFixedImage(puzzleCoords, binaryImage, width),
-                //binaryImage,
+                PerspectiveFixer.getFixedImage(puzzleCoordinates, binaryImage, width),
                 900,
                 900,
                 Bitmap.Config.RGB_565
             )
-
-
             runOnUiThread { binding.ivGrayView.setImageBitmap(puzzle) }
         }catch (e: Exception){
             Log.e("Error:", e.toString())
