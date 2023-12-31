@@ -1,6 +1,5 @@
 package com.example.sudokuscan
 
-import android.graphics.Bitmap
 import java.nio.ByteBuffer
 
 /**
@@ -18,6 +17,6 @@ fun ByteBuffer.toByteArray(): ByteArray {
  * @param div The value that you want to divide the vector.
  */
 operator fun DoubleArray.divAssign(div: Double) {
-    for(col in 0 until this.size)
+    for(col in indices)
         this[col] /= div
 }
