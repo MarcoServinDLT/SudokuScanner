@@ -140,7 +140,7 @@ $$binImg_{r,c} =
     - [ ] Export the model as a tensorflow lite model.
 
 
-## Build development enviroment ⚙
+## Build development environment ⚙
 ---
 For the application to work correctly it was necessary to use some extern dependencies and libraries. 
 
