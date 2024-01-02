@@ -1,6 +1,5 @@
 package com.example.sudokuscan
 
-import android.util.Log
 import kotlin.math.floor
 
 object PerspectiveFixer {
@@ -43,8 +42,6 @@ object PerspectiveFixer {
         homography[0,0] = h[0,0]; homography[0,1] = h[1,0]; homography[0,2] = h[2,0]
         homography[1,0] = h[3,0]; homography[1,1] = h[4,0]; homography[1,2] = h[5,0]
         homography[2,0] = h[6,0]; homography[2,1] = h[7,0]; homography[2,2] = 1.0
-
-        Log.d("matrix", "${h[0,0]} | ${h[1,0]} | ${h[2,0]} | ${h[3,0]} | ${h[4,0]} | ${h[5,0]} | ${h[6,0]} | ${h[7,0]}")
 
     } // End of the object initialization. //
 
