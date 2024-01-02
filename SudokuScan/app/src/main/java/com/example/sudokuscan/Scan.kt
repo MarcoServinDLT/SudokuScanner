@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.graphics.*
 import android.os.Bundle
-import android.util.Log
+import android.util.Size
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -102,6 +102,7 @@ class Scan : AppCompatActivity(), ImageAnalysis.Analyzer {
         /* --------------- IMAGE CAPTURE USE CASE DECLARATION --------------- */
         val imageCapture = ImageCapture.Builder()
             .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+            .setMaxResolution(Size(250, 450))
             .build()
 
         /* --------------- IMAGE ANALYSIS USE CASE DECLARATION --------------- */
@@ -127,7 +128,7 @@ class Scan : AppCompatActivity(), ImageAnalysis.Analyzer {
     override fun analyze(image: ImageProxy) {
         val bitmap: Bitmap? =
             binding.imageView.bitmap?.let {
-                Bitmap.createScaledBitmap(it, 250, 450, false)
+                Bitmap.createScaledBitmap(it, 150, 275, false)
             }
         image.close()
         /* check for get a bitmap .*/
@@ -142,18 +143,14 @@ class Scan : AppCompatActivity(), ImageAnalysis.Analyzer {
 
         val puzzleCoordinates = PuzzleExtractor().getPuzzle(binaryImage, height, width)
 
-        try {
+        val puzzle = Bitmap.createBitmap(
+            PerspectiveFixer.getFixedImage(puzzleCoordinates, binaryImage, width),
+            900,
+            900,
+            Bitmap.Config.RGB_565
+        )
+        runOnUiThread { binding.ivGrayView.setImageBitmap(puzzle) }
 
-            val puzzle = Bitmap.createBitmap(
-                PerspectiveFixer.getFixedImage(puzzleCoordinates, binaryImage, width),
-                900,
-                900,
-                Bitmap.Config.RGB_565
-            )
-            runOnUiThread { binding.ivGrayView.setImageBitmap(puzzle) }
-        }catch (e: Exception){
-            Log.e("Error:", e.toString())
-        }
     } // End of the process to analyze image.
 
 }
