@@ -13,26 +13,6 @@ class ImageProcessor (private var image: Bitmap){
     private val radius = 20
 
     /**
-     * Class initialization.
-     */
-    init { toGrayScale() }
-
-    /**
-     * Function to convert the image to gray
-     */
-    private fun toGrayScale(){
-        val bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
-        val c = Canvas(bmpGrayscale)
-        val paint = Paint()
-        val cm = ColorMatrix()
-        cm.setSaturation(0f)
-        val f = ColorMatrixColorFilter(cm)
-        paint.colorFilter = f
-        c.drawBitmap(image, 0f, 0f, paint)
-        image = bmpGrayscale
-    }
-
-    /**
      *  Convert a 32 bits Integer representation of RGBA pixel of image in one value of the
      *  limits of 8 bits, to represent the binary value of the pixel.
      *  @param pixel An integer of 32 bits that represents any RGBA pixel.
@@ -88,7 +68,7 @@ class ImageProcessor (private var image: Bitmap){
         val prefPixelSum = getPrefixTable()
         val blurredImage = IntArray(height * width)
         /* function to get the prefix sum without indexes problem. */
-        val sumByPrefix = {row : Int, col: Int ->
+        val sumByPrefix = { row : Int, col: Int ->
             val y = if(row <= 0) 0 else row-1
             val x = if(col <= 0) 0 else col-1
             prefPixelSum[y * width + x]
