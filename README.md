@@ -61,17 +61,23 @@ x1=
 \begin{cases}
     c-Radius & \quad c-Radius \geq 0\\
     0 & \quad\text{otherwise}
-\end{cases}, 
+\end{cases},$$
+
+$$
 x2=
 \begin{cases}
     c+Radius & \quad c+Radius < w\\
     0 & \quad\text{otherwise}
-\end{cases}, 
+\end{cases},$$
+
+$$
 y1=
 \begin{cases}
     r-Radius & \quad r-Radius \geq 0\\
     0 & \quad\text{otherwise}
-\end{cases},
+\end{cases},$$
+
+$$
 y2=
 \begin{cases}
     r-Radius & \quad r+Radius < h\\
